@@ -81,6 +81,7 @@ const App: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [allEvents, setAllEvents] = useState<EventModel[]>([]);
   const [instrumentCounts, setInstrumentCounts] = useState<Record<string, number>>({});
+  const [expandedFamily, setExpandedFamily] = useState<string | null>(null);
 
   const updateCount = (instrument: string, delta: number) => {
     setInstrumentCounts(prev => {
@@ -749,25 +750,36 @@ const App: React.FC = () => {
                 </div>
               )}
 
-              {selectedRole === Role.MUSICIAN && Object.entries(INSTRUMENT_GROUPS).map(([family, instruments]) => (
+              {selectedRole === Role.MUSICIAN && Object.entries(INSTRUMENT_GROUPS).map(([family, instruments]) => {
+                const familyCount = instruments.reduce((sum, inst) => sum + (instrumentCounts[inst] || 0), 0);
+                return (
                 <div key={family} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                  <div className="bg-slate-50 px-6 py-4 border-b border-slate-200">
-                    <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider">{family}</h3>
+                  <div 
+                    onClick={() => setExpandedFamily(prev => prev === family ? null : family)}
+                    className="bg-slate-50 px-6 py-4 border-b border-slate-200 cursor-pointer flex justify-between items-center hover:bg-slate-100 transition-colors"
+                  >
+                    <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                      {family}
+                      {familyCount > 0 && <span className="bg-indigo-100 text-indigo-700 text-xs py-1 px-2 rounded-full">{familyCount}</span>}
+                    </h3>
+                    <svg className={`w-6 h-6 text-slate-400 transition-transform ${expandedFamily === family ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </div>
-                  <div className="divide-y divide-slate-100">
-                    {instruments.map(inst => (
-                      <div key={inst} className="flex justify-between items-center p-4 px-6 hover:bg-slate-50/50 transition-colors">
-                        <span className="font-bold text-slate-700 text-lg">{inst}</span>
-                        <div className="flex items-center gap-4 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
-                          <button type="button" onClick={() => updateCount(inst, -1)} className="w-10 h-10 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-xl flex items-center justify-center">-</button>
-                          <span className="w-8 text-center text-xl font-black text-slate-800">{instrumentCounts[inst] || 0}</span>
-                          <button type="button" onClick={() => updateCount(inst, 1)} className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 font-black text-xl flex items-center justify-center">+</button>
+                  {expandedFamily === family && (
+                    <div className="divide-y divide-slate-100 animate-in slide-in-from-top-2 duration-200">
+                      {instruments.map(inst => (
+                        <div key={inst} className="flex justify-between items-center p-4 px-6 hover:bg-slate-50/50 transition-colors">
+                          <span className="font-bold text-slate-700 text-lg">{inst}</span>
+                          <div className="flex items-center gap-4 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+                            <button type="button" onClick={() => updateCount(inst, -1)} className="w-10 h-10 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-xl flex items-center justify-center">-</button>
+                            <span className="w-8 text-center text-xl font-black text-slate-800">{instrumentCounts[inst] || 0}</span>
+                            <button type="button" onClick={() => updateCount(inst, 1)} className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 font-black text-xl flex items-center justify-center">+</button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              ))}
+              )})}
 
               <div className="pt-4 sticky bottom-4 z-10">
                 <Button 
