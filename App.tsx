@@ -7,7 +7,7 @@ import { PrintReport } from './components/PrintReport';
 import { CityPrint } from './components/CityPrint';
 import { CitiesList } from './components/CitiesList';
 import { AttendeesList } from './components/AttendeesList';
-import { supabase, fetchAttendees, addAttendee, updateAttendee, deleteAttendee, clearAllAttendees, getEventByCode, createEvent, updateEvent, deleteEvent, checkSystemStatus, fetchAllEvents } from './services/supabase';
+import { supabase, fetchAttendees, addAttendee, addMultipleAttendees, updateAttendee, deleteAttendee, clearAllAttendees, getEventByCode, createEvent, updateEvent, deleteEvent, checkSystemStatus, fetchAllEvents } from './services/supabase';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('event-selection');
@@ -80,6 +80,16 @@ const App: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [allEvents, setAllEvents] = useState<EventModel[]>([]);
+  const [instrumentCounts, setInstrumentCounts] = useState<Record<string, number>>({});
+
+  const updateCount = (instrument: string, delta: number) => {
+    setInstrumentCounts(prev => {
+      const current = prev[instrument] || 0;
+      const next = current + delta;
+      if (next < 0) return prev;
+      return { ...prev, [instrument]: next };
+    });
+  };
 
   useEffect(() => {
     if (selectedRole) {
@@ -276,57 +286,56 @@ const App: React.FC = () => {
 
   const handleRegister = (role: Role) => {
     setSelectedRole(role);
-    setInstrument(role === Role.ORGANIST ? 'Órgão' : '');
-    setMinistry(Ministry.NONE);
-    setLevel(Level.NONE);
-    setCity('');
-    setCitySearchTerm('');
+    setInstrumentCounts({});
+    setEditingAttendee(null);
     navigateTo('form');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!city || !activeEventId || isSubmitting) return;
+    if (!activeEventId || isSubmitting) return;
+
+    const totalCount = Object.values(instrumentCounts).reduce((a, b) => a + b, 0);
+    if (totalCount === 0) {
+      alert('Selecione pelo menos 1 instrumento.');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      const newAttendee: Attendee = {
-        id: editingAttendee ? editingAttendee.id : generateId(),
-        event_id: activeEventId,
-        ministry,
-        role: selectedRole!,
-        instrument: instrument || (selectedRole === Role.ORGANIST ? 'Órgão' : 'Não informado'),
-        level: selectedRole === Role.ORGANIST ? Level.MUSICIAN : level,
-        city,
-        timestamp: editingAttendee ? editingAttendee.timestamp : Date.now(),
-      };
+      const newAttendees: Attendee[] = [];
+      const timestamp = Date.now();
 
-      const success = editingAttendee
-        ? await updateAttendee(newAttendee)
-        : await addAttendee(newAttendee);
+      Object.entries(instrumentCounts).forEach(([instName, count]) => {
+        if (count > 0) {
+          for (let i = 0; i < count; i++) {
+            newAttendees.push({
+              id: generateId(),
+              event_id: activeEventId,
+              ministry: instName === 'Órgão' ? Ministry.ORGANISTA : Ministry.NONE,
+              role: instName === 'Órgão' ? Role.ORGANIST : Role.MUSICIAN,
+              instrument: instName,
+              level: Level.MUSICIAN,
+              city: "Não Informada",
+              timestamp: timestamp + i,
+            });
+          }
+        }
+      });
+
+      const success = await addMultipleAttendees(newAttendees);
 
       if (success) {
-        if (editingAttendee) {
-          setAttendees(prev => prev.map(a => a.id === newAttendee.id ? newAttendee : a));
-        } else {
-          setAttendees(prev => [newAttendee, ...prev]);
-        }
-
-        const wasEditing = !!editingAttendee;
+        setAttendees(prev => [...newAttendees, ...prev]);
         setShowSuccess(true);
-        setCity('');
-        setCitySearchTerm('');
-        setMinistry(Ministry.NONE);
-        setInstrument(selectedRole === Role.ORGANIST ? 'Órgão' : '');
-        setLevel(Level.NONE);
-        setEditingAttendee(null);
+        setInstrumentCounts({});
 
         setTimeout(() => {
           setShowSuccess(false);
-          if (wasEditing) navigateTo('dashboard');
-        }, 2000);
+          navigateTo('landing');
+        }, 1500);
       } else {
-        alert('Erro ao salvar participante. Tente novamente.');
+        alert('Erro ao salvar participante(s). Tente novamente.');
       }
     } finally {
       setIsSubmitting(false);
@@ -415,14 +424,7 @@ const App: React.FC = () => {
   };
 
   const handleEditAttendee = (attendee: Attendee) => {
-    setEditingAttendee(attendee);
-    setSelectedRole(attendee.role);
-    setMinistry(attendee.ministry);
-    setInstrument(attendee.instrument);
-    setLevel(attendee.level);
-    setCity(attendee.city);
-    setCitySearchTerm(attendee.city);
-    navigateTo('form');
+    alert("Edição individual desativada neste modo. Para corrigir uma contagem errada, exclua o registro individual na lixeira e adicione um novo.");
   };
 
   const handleDeleteAttendee = async (id: string) => {
@@ -710,73 +712,73 @@ const App: React.FC = () => {
         )}
 
         {view === 'form' && (
-          <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 animate-in slide-in-from-bottom-4 duration-300">
-            <div className="flex items-center gap-4 mb-6">
-              <Button onClick={() => { if (editingAttendee) { setEditingAttendee(null); navigateTo('dashboard'); } else { refreshAttendees(); navigateTo('landing'); } }} variant="outline" className="px-2 py-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-              </Button>
-              <h2 className="text-2xl font-bold text-slate-800">
-                {editingAttendee ? 'Editar Registro' : `Registro: ${selectedRole}`}
-              </h2>
+          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-slate-100 animate-in slide-in-from-bottom-4 duration-300">
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-4">
+                <button type="button" onClick={() => navigateTo('landing')} className="text-slate-400 hover:text-indigo-600 bg-slate-50 p-2 rounded-xl transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <h2 className="text-2xl font-black text-slate-800 tracking-tight">
+                  {selectedRole === Role.ORGANIST ? 'Registro: Organistas' : 'Registro: Músicos'}
+                </h2>
+              </div>
             </div>
 
             {showSuccess && (
-              <div className="bg-emerald-100 text-emerald-800 p-4 rounded-xl mb-6 text-center font-bold animate-in fade-in zoom-in-95 duration-200">
-                {editingAttendee ? 'Atualizado com sucesso!' : 'Inscrito com sucesso!'}
+              <div className="bg-emerald-50 text-emerald-700 p-4 rounded-xl mb-6 text-center font-bold border border-emerald-100 flex items-center justify-center gap-2">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                Contagem registrada com sucesso!
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase">
-                  {selectedRole === Role.ORGANIST ? 'Cargo' : 'Ministério'}
-                </label>
-                <select value={ministry} onChange={(e) => setMinistry(e.target.value as Ministry)} className="w-full p-4 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none appearance-none">
-                  {(selectedRole === Role.ORGANIST ? [Ministry.NONE, Ministry.EXAMINADORA, Ministry.INSTRUTORA, Ministry.ORGANISTA] : [Ministry.NONE, Ministry.ANCIAO, Ministry.DIACONO, Ministry.COOPERADOR_OFICIO, Ministry.COOPERADOR_JOVENS]).map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-              </div>
-
-              {selectedRole === Role.MUSICIAN && (
-                <>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-2 uppercase">Cargo</label>
-                    <select value={level} onChange={(e) => setLevel(e.target.value as Level)} className="w-full p-4 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none appearance-none">
-                      {Object.values(Level).map(l => <option key={l} value={l}>{l}</option>)}
-                    </select>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {selectedRole === Role.ORGANIST && (
+                <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <span className="text-4xl drop-shadow-sm">🎹</span>
+                    <div>
+                      <h3 className="text-xl font-bold text-slate-800">Órgão</h3>
+                      <p className="text-sm text-emerald-600 font-medium">Quantidade presente</p>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-2 uppercase">Instrumento</label>
-                    <select value={instrument} onChange={(e) => setInstrument(e.target.value)} className="w-full p-4 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none appearance-none">
-                      <option value="">Selecione o Instrumento</option>
-                      {INSTRUMENTS.map(i => <option key={i} value={i}>{i}</option>)}
-                    </select>
+                  <div className="flex items-center gap-4 bg-white p-2 rounded-xl shadow-sm border border-emerald-100">
+                    <button type="button" onClick={() => updateCount('Órgão', -1)} className="w-12 h-12 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-800 font-black text-2xl flex items-center justify-center transition-colors">-</button>
+                    <span className="w-12 text-center text-2xl font-black text-slate-800">{instrumentCounts['Órgão'] || 0}</span>
+                    <button type="button" onClick={() => updateCount('Órgão', 1)} className="w-12 h-12 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 hover:text-emerald-800 font-black text-2xl flex items-center justify-center transition-colors">+</button>
                   </div>
-                </>
+                </div>
               )}
 
-              <div className="relative" ref={cityDropdownRef}>
-                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase">Cidade / Localidade <span className="text-rose-500">*</span></label>
-                <div onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)} className={`w-full p-4 bg-white border rounded-xl flex justify-between items-center cursor-pointer ${!city ? 'border-amber-300' : 'border-slate-300'}`}>
-                  <span className={city ? 'text-slate-900' : 'text-slate-400'}>{city || 'Selecione a cidade'}</span>
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
-                </div>
-                {isCityDropdownOpen && (
-                  <div className="absolute z-50 w-full bottom-full mb-2 bg-white border border-slate-200 rounded-xl shadow-2xl max-h-64 overflow-y-auto flex flex-col-reverse">
-                    <div className="p-3 border-t sticky bottom-0 bg-white">
-                      <input autoFocus type="text" value={citySearchTerm} onChange={e => setCitySearchTerm(e.target.value)} placeholder="Buscar cidade..." className="w-full p-2 border rounded-lg focus:border-indigo-400 outline-none"/>
-                    </div>
-                    <div className="flex flex-col">
-                      {filteredCities.map(c => (
-                        <div key={c} onClick={() => { setCity(c); setIsCityDropdownOpen(false); }} className="p-3 hover:bg-indigo-50 cursor-pointer border-b last:border-0">{c}</div>
-                      ))}
-                    </div>
+              {selectedRole === Role.MUSICIAN && Object.entries(INSTRUMENT_GROUPS).map(([family, instruments]) => (
+                <div key={family} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                  <div className="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                    <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider">{family}</h3>
                   </div>
-                )}
-              </div>
+                  <div className="divide-y divide-slate-100">
+                    {instruments.map(inst => (
+                      <div key={inst} className="flex justify-between items-center p-4 px-6 hover:bg-slate-50/50 transition-colors">
+                        <span className="font-bold text-slate-700 text-lg">{inst}</span>
+                        <div className="flex items-center gap-4 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+                          <button type="button" onClick={() => updateCount(inst, -1)} className="w-10 h-10 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-xl flex items-center justify-center">-</button>
+                          <span className="w-8 text-center text-xl font-black text-slate-800">{instrumentCounts[inst] || 0}</span>
+                          <button type="button" onClick={() => updateCount(inst, 1)} className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 font-black text-xl flex items-center justify-center">+</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
 
-              <Button type="submit" disabled={!city || isSubmitting} className="w-full py-5 text-xl font-bold rounded-2xl shadow-lg" variant={selectedRole === Role.MUSICIAN ? 'primary' : 'secondary'}>
-                {isSubmitting ? 'SALVANDO...' : (editingAttendee ? 'SALVAR ALTERAÇÕES' : 'REGISTRAR PRESENÇA')}
-              </Button>
+              <div className="pt-4 sticky bottom-4 z-10">
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting || Object.values(instrumentCounts).reduce((a,b)=>a+b,0) === 0} 
+                  className="w-full py-5 text-xl font-black rounded-2xl shadow-xl hover:shadow-2xl transition-all" 
+                  variant={selectedRole === Role.MUSICIAN ? 'primary' : 'secondary'}
+                >
+                  {isSubmitting ? 'SALVANDO...' : `SALVAR CONTAGEM (${Object.values(instrumentCounts).reduce((a,b)=>a+b,0)})`}
+                </Button>
+              </div>
             </form>
           </div>
         )}

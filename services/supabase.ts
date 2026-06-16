@@ -137,6 +137,21 @@ export async function addAttendee(attendee: Attendee): Promise<boolean> {
     return true;
 }
 
+export async function addMultipleAttendees(attendees: Attendee[]): Promise<boolean> {
+    if (attendees.length === 0) return true;
+    
+    const { error } = await supabase
+        .from('attendees')
+        .insert(attendees);
+
+    if (error) {
+        console.error('ERRO Supabase (addMultipleAttendees):', error.message, error.details, error.hint);
+        return false;
+    }
+
+    return true;
+}
+
 export async function updateAttendee(attendee: Attendee): Promise<boolean> {
     const { error } = await supabase
         .from('attendees')
