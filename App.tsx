@@ -310,13 +310,38 @@ const App: React.FC = () => {
       Object.entries(instrumentCounts).forEach(([instName, count]) => {
         if (count > 0) {
           for (let i = 0; i < count; i++) {
+            let role = selectedRole!;
+            let ministry = Ministry.NONE;
+            let level = Level.MUSICIAN;
+            let instrument = instName;
+
+            if (selectedRole === Role.ORGANIST) {
+              instrument = 'Órgão';
+              if (instName === 'Examinadora') ministry = Ministry.EXAMINADORA;
+              else if (instName === 'Instrutora') ministry = Ministry.INSTRUTORA;
+              else if (instName === 'Organista') ministry = Ministry.ORGANISTA;
+            } else if (selectedRole === Role.MUSICIAN) {
+              if (['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].includes(instName)) {
+                instrument = 'Não informado';
+                if (instName === 'Ancião') ministry = Ministry.ANCIAO;
+                else if (instName === 'Diácono') ministry = Ministry.DIACONO;
+                else if (instName === 'Coop. Ofício') ministry = Ministry.COOPERADOR_OFICIO;
+                else if (instName === 'Coop. Jovens') ministry = Ministry.COOPERADOR_JOVENS;
+              } else if (['Enc. Regional', 'Enc. Local', 'Instrutor'].includes(instName)) {
+                instrument = 'Não informado';
+                if (instName === 'Enc. Regional') level = Level.REGIONAL;
+                else if (instName === 'Enc. Local') level = Level.LOCAL;
+                else if (instName === 'Instrutor') level = Level.INSTRUCTOR;
+              }
+            }
+
             newAttendees.push({
               id: generateId(),
               event_id: activeEventId,
-              ministry: instName === 'Órgão' ? Ministry.ORGANISTA : Ministry.NONE,
-              role: instName === 'Órgão' ? Role.ORGANIST : Role.MUSICIAN,
-              instrument: instName,
-              level: Level.MUSICIAN,
+              ministry,
+              role,
+              instrument,
+              level,
               city: "Não Informada",
               timestamp: timestamp + i,
             });
@@ -734,23 +759,83 @@ const App: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-8">
               {selectedRole === Role.ORGANIST && (
-                <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 flex justify-between items-center">
-                  <div className="flex items-center gap-4">
-                    <span className="text-4xl drop-shadow-sm">🎹</span>
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-800">Órgão</h3>
-                      <p className="text-sm text-emerald-600 font-medium">Quantidade presente</p>
-                    </div>
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                  <div className="bg-emerald-50 px-6 py-4 border-b border-emerald-100 flex items-center gap-3">
+                    <span className="text-2xl drop-shadow-sm">🎹</span>
+                    <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider">Cargos</h3>
                   </div>
-                  <div className="flex items-center gap-4 bg-white p-2 rounded-xl shadow-sm border border-emerald-100">
-                    <button type="button" onClick={() => updateCount('Órgão', -1)} className="w-12 h-12 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-800 font-black text-2xl flex items-center justify-center transition-colors">-</button>
-                    <span className="w-12 text-center text-2xl font-black text-slate-800">{instrumentCounts['Órgão'] || 0}</span>
-                    <button type="button" onClick={() => updateCount('Órgão', 1)} className="w-12 h-12 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 hover:text-emerald-800 font-black text-2xl flex items-center justify-center transition-colors">+</button>
+                  <div className="divide-y divide-slate-100">
+                    {['Examinadora', 'Instrutora', 'Organista'].map(cargo => (
+                      <div key={cargo} className="flex justify-between items-center p-4 px-6 hover:bg-slate-50/50 transition-colors">
+                        <span className="font-bold text-slate-700 text-lg">{cargo}</span>
+                        <div className="flex items-center gap-4 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+                          <button type="button" onClick={() => updateCount(cargo, -1)} className="w-10 h-10 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-xl flex items-center justify-center">-</button>
+                          <span className="w-8 text-center text-xl font-black text-slate-800">{instrumentCounts[cargo] || 0}</span>
+                          <button type="button" onClick={() => updateCount(cargo, 1)} className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 font-black text-xl flex items-center justify-center">+</button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
 
-              {selectedRole === Role.MUSICIAN && Object.entries(INSTRUMENT_GROUPS).map(([family, instruments]) => {
+              {selectedRole === Role.MUSICIAN && (
+                <>
+                  <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div 
+                      onClick={() => setExpandedFamily(prev => prev === 'Ministério' ? null : 'Ministério')}
+                      className="bg-slate-50 px-6 py-4 border-b border-slate-200 cursor-pointer flex justify-between items-center hover:bg-slate-100 transition-colors"
+                    >
+                      <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                        Ministério
+                        {['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0) > 0 && <span className="bg-indigo-100 text-indigo-700 text-xs py-1 px-2 rounded-full">{['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0)}</span>}
+                      </h3>
+                      <svg className={`w-6 h-6 text-slate-400 transition-transform ${expandedFamily === 'Ministério' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </div>
+                    {expandedFamily === 'Ministério' && (
+                      <div className="divide-y divide-slate-100 animate-in slide-in-from-top-2 duration-200">
+                        {['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].map(min => (
+                          <div key={min} className="flex justify-between items-center p-4 px-6 hover:bg-slate-50/50 transition-colors">
+                            <span className="font-bold text-slate-700 text-lg">{min}</span>
+                            <div className="flex items-center gap-4 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+                              <button type="button" onClick={() => updateCount(min, -1)} className="w-10 h-10 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-xl flex items-center justify-center">-</button>
+                              <span className="w-8 text-center text-xl font-black text-slate-800">{instrumentCounts[min] || 0}</span>
+                              <button type="button" onClick={() => updateCount(min, 1)} className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 font-black text-xl flex items-center justify-center">+</button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div 
+                      onClick={() => setExpandedFamily(prev => prev === 'Cargo' ? null : 'Cargo')}
+                      className="bg-slate-50 px-6 py-4 border-b border-slate-200 cursor-pointer flex justify-between items-center hover:bg-slate-100 transition-colors"
+                    >
+                      <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                        Cargo
+                        {['Enc. Regional', 'Enc. Local', 'Instrutor'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0) > 0 && <span className="bg-indigo-100 text-indigo-700 text-xs py-1 px-2 rounded-full">{['Enc. Regional', 'Enc. Local', 'Instrutor'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0)}</span>}
+                      </h3>
+                      <svg className={`w-6 h-6 text-slate-400 transition-transform ${expandedFamily === 'Cargo' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </div>
+                    {expandedFamily === 'Cargo' && (
+                      <div className="divide-y divide-slate-100 animate-in slide-in-from-top-2 duration-200">
+                        {['Enc. Regional', 'Enc. Local', 'Instrutor'].map(cargo => (
+                          <div key={cargo} className="flex justify-between items-center p-4 px-6 hover:bg-slate-50/50 transition-colors">
+                            <span className="font-bold text-slate-700 text-lg">{cargo}</span>
+                            <div className="flex items-center gap-4 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+                              <button type="button" onClick={() => updateCount(cargo, -1)} className="w-10 h-10 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-xl flex items-center justify-center">-</button>
+                              <span className="w-8 text-center text-xl font-black text-slate-800">{instrumentCounts[cargo] || 0}</span>
+                              <button type="button" onClick={() => updateCount(cargo, 1)} className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 font-black text-xl flex items-center justify-center">+</button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {Object.entries(INSTRUMENT_GROUPS).map(([family, instruments]) => {
                 const familyCount = instruments.reduce((sum, inst) => sum + (instrumentCounts[inst] || 0), 0);
                 return (
                 <div key={family} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
@@ -780,6 +865,8 @@ const App: React.FC = () => {
                   )}
                 </div>
               )})}
+                </>
+              )}
 
               <div className="pt-4 sticky bottom-4 z-10">
                 <Button 
