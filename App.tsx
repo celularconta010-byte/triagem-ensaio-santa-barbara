@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Attendee, Role, Level, ViewState, INSTRUMENTS, Ministry, EventModel } from './types';
+import { Attendee, Role, Level, ViewState, INSTRUMENTS, INSTRUMENT_GROUPS, Ministry, EventModel } from './types';
 import { Button } from './components/Button';
 import { BRAZILIAN_CITIES } from './services/cities';
 import { EventDashboard } from './components/EventDashboard';
