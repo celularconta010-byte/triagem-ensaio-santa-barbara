@@ -555,7 +555,7 @@ const App: React.FC = () => {
         </header>
       )}
 
-      <main className={`w-full ${view === 'print' ? 'max-w-none p-0' : 'max-w-2xl px-4'} mb-20`}>
+      <main className={`w-full ${view === 'print' ? 'max-w-none p-0' : 'max-w-5xl px-4'} mb-20`}>
 
         {/* EVENT SELECTION VIEW */}
         {view === 'event-selection' && (
@@ -702,76 +702,76 @@ const App: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
                 onClick={() => handleRegister(Role.MUSICIAN)}
-                className="h-48 bg-white border-2 border-indigo-100 rounded-2xl flex flex-col items-center justify-center gap-4 hover:border-indigo-400 hover:shadow-xl transition-all group"
+                className="h-36 bg-white border border-indigo-100 rounded-2xl flex flex-col items-center justify-center gap-2.5 hover:border-indigo-400 hover:shadow-lg transition-all group"
               >
-                <div className="p-4 bg-indigo-50 rounded-[2rem] group-hover:bg-indigo-100 transition-colors shadow-sm group-hover:scale-110 duration-300">
-                  <span className="text-5xl drop-shadow-sm">🎻</span>
+                <div className="p-3 bg-indigo-50 rounded-2xl group-hover:bg-indigo-100 transition-colors shadow-sm group-hover:scale-110 duration-300">
+                  <span className="text-4xl drop-shadow-sm">🎻</span>
                 </div>
                 <div className="text-center">
-                  <h3 className="font-bold text-xl text-slate-800">Irmãos</h3>
-                  <p className="text-slate-500">Músicos</p>
+                  <h3 className="font-bold text-lg text-slate-800">Irmãos</h3>
+                  <p className="text-slate-500 text-xs">Músicos</p>
                 </div>
               </button>
 
               <button
                 onClick={() => handleRegister(Role.ORGANIST)}
-                className="h-48 bg-white border-2 border-emerald-100 rounded-2xl flex flex-col items-center justify-center gap-4 hover:border-emerald-400 hover:shadow-xl transition-all group"
+                className="h-36 bg-white border border-emerald-100 rounded-2xl flex flex-col items-center justify-center gap-2.5 hover:border-emerald-400 hover:shadow-lg transition-all group"
               >
-                <div className="p-4 bg-emerald-50 rounded-[2rem] group-hover:bg-emerald-100 transition-colors shadow-sm group-hover:scale-110 duration-300">
-                  <span className="text-5xl drop-shadow-sm">🎹</span>
+                <div className="p-3 bg-emerald-50 rounded-2xl group-hover:bg-emerald-100 transition-colors shadow-sm group-hover:scale-110 duration-300">
+                  <span className="text-4xl drop-shadow-sm">🎹</span>
                 </div>
                 <div className="text-center">
-                  <h3 className="font-bold text-xl text-slate-800">Irmãs</h3>
-                  <p className="text-slate-500">Organistas</p>
+                  <h3 className="font-bold text-lg text-slate-800">Irmãs</h3>
+                  <p className="text-slate-500 text-xs">Organistas</p>
                 </div>
               </button>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <h4 className="font-bold text-slate-800">Painel do Evento</h4>
-                <p className="text-sm text-slate-500">{attendees.length} presentes registrados</p>
+                <h4 className="font-bold text-slate-800 text-sm">Painel do Evento</h4>
+                <p className="text-xs text-slate-500">{attendees.length} presentes registrados</p>
               </div>
-              <Button onClick={() => navigateTo('dashboard')} variant="outline">Configurar e Relatórios</Button>
+              <Button onClick={() => navigateTo('dashboard')} variant="outline" className="py-1.5 px-3 text-xs">Configurar e Relatórios</Button>
             </div>
           </div>
         )}
 
         {view === 'form' && (
-          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-slate-100 animate-in slide-in-from-bottom-4 duration-300">
-            <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100">
-              <div className="flex items-center gap-4">
-                <button type="button" onClick={() => navigateTo('landing')} className="text-slate-400 hover:text-indigo-600 bg-slate-50 p-2 rounded-xl transition-colors">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+          <div className="bg-white p-5 sm:p-6 rounded-2xl shadow-lg border border-slate-100 animate-in slide-in-from-bottom-4 duration-300">
+            <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <button type="button" onClick={() => navigateTo('landing')} className="text-slate-400 hover:text-indigo-600 bg-slate-50 p-1.5 rounded-lg transition-colors">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 </button>
-                <h2 className="text-2xl font-black text-slate-800 tracking-tight">
+                <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">
                   {selectedRole === Role.ORGANIST ? 'Registro: Organistas' : 'Registro: Músicos'}
                 </h2>
               </div>
             </div>
 
             {showSuccess && (
-              <div className="bg-emerald-50 text-emerald-700 p-4 rounded-xl mb-6 text-center font-bold border border-emerald-100 flex items-center justify-center gap-2">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+              <div className="bg-emerald-50 text-emerald-700 p-3 rounded-lg mb-5 text-center font-bold border border-emerald-100 flex items-center justify-center gap-2 text-sm">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 Contagem registrada com sucesso!
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {selectedRole === Role.ORGANIST && (
                 <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                  <div className="bg-emerald-50 px-6 py-4 border-b border-emerald-100 flex items-center gap-3">
-                    <span className="text-2xl drop-shadow-sm">🎹</span>
-                    <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider">Cargos</h3>
+                  <div className="bg-emerald-50 px-4 py-2.5 border-b border-emerald-100 flex items-center gap-2.5">
+                    <span className="text-xl drop-shadow-sm">🎹</span>
+                    <h3 className="text-base font-extrabold text-slate-800 uppercase tracking-wider">Cargos</h3>
                   </div>
                   <div className="divide-y divide-slate-100">
                     {['Examinadora', 'Instrutora', 'Organista'].map(cargo => (
-                      <div key={cargo} className="flex justify-between items-center p-4 px-6 hover:bg-slate-50/50 transition-colors">
-                        <span className="font-bold text-slate-700 text-lg">{cargo}</span>
-                        <div className="flex items-center gap-4 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
-                          <button type="button" onClick={() => updateCount(cargo, -1)} className="w-10 h-10 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-xl flex items-center justify-center">-</button>
-                          <span className="w-8 text-center text-xl font-black text-slate-800">{instrumentCounts[cargo] || 0}</span>
-                          <button type="button" onClick={() => updateCount(cargo, 1)} className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 font-black text-xl flex items-center justify-center">+</button>
+                      <div key={cargo} className="flex justify-between items-center p-3 px-4 hover:bg-slate-50/50 transition-colors">
+                        <span className="font-bold text-slate-700 text-base">{cargo}</span>
+                        <div className="flex items-center gap-2 bg-white p-0.5 rounded-lg shadow-sm border border-slate-200">
+                          <button type="button" onClick={() => updateCount(cargo, -1)} className="w-8 h-8 rounded-md bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-lg flex items-center justify-center">-</button>
+                          <span className="w-6 text-center text-base font-black text-slate-800">{instrumentCounts[cargo] || 0}</span>
+                          <button type="button" onClick={() => updateCount(cargo, 1)} className="w-8 h-8 rounded-md bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 font-black text-lg flex items-center justify-center">+</button>
                         </div>
                       </div>
                     ))}
@@ -780,99 +780,168 @@ const App: React.FC = () => {
               )}
 
               {selectedRole === Role.MUSICIAN && (
-                <>
-                  <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                    <div 
-                      onClick={() => setExpandedFamily(prev => prev === 'Ministério' ? null : 'Ministério')}
-                      className="bg-slate-50 px-6 py-4 border-b border-slate-200 cursor-pointer flex justify-between items-center hover:bg-slate-100 transition-colors"
-                    >
-                      <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                        Ministério
-                        {['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0) > 0 && <span className="bg-indigo-100 text-indigo-700 text-xs py-1 px-2 rounded-full">{['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0)}</span>}
-                      </h3>
-                      <svg className={`w-6 h-6 text-slate-400 transition-transform ${expandedFamily === 'Ministério' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                    </div>
-                    {expandedFamily === 'Ministério' && (
-                      <div className="divide-y divide-slate-100 animate-in slide-in-from-top-2 duration-200">
-                        {['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].map(min => (
-                          <div key={min} className="flex justify-between items-center p-4 px-6 hover:bg-slate-50/50 transition-colors">
-                            <span className="font-bold text-slate-700 text-lg">{min}</span>
-                            <div className="flex items-center gap-4 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
-                              <button type="button" onClick={() => updateCount(min, -1)} className="w-10 h-10 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-xl flex items-center justify-center">-</button>
-                              <span className="w-8 text-center text-xl font-black text-slate-800">{instrumentCounts[min] || 0}</span>
-                              <button type="button" onClick={() => updateCount(min, 1)} className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 font-black text-xl flex items-center justify-center">+</button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <h3 className="text-base font-extrabold text-[#8BA4C0] uppercase tracking-wider mb-2.5 px-1">Famílias de Instrumentos</h3>
+                    {Object.entries(INSTRUMENT_GROUPS).map(([family, instruments], index) => {
+                      const familyCount = instruments.reduce((sum, inst) => sum + (instrumentCounts[inst] || 0), 0);
+                      const isExpanded = expandedFamily === family;
+                      const num = String(index + 1).padStart(2, '0');
+                      
+                      let svgIcon = null;
+                      let subtitle = '';
+                      if (family === 'Cordas') {
+                        subtitle = 'Violino, Viola, Violoncelo';
+                        svgIcon = (
+                          <svg className="w-9 h-9 text-[#6482A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M11 20c-1.5-1-2-2.5-2-4 0-2 1.5-3 1.5-4s-1.5-2-1.5-4c0-1.5.5-3 2-4" />
+                            <path d="M13 20c1.5-1 2-2.5 2-4 0-2-1.5-3-1.5-4s1.5-2 1.5-4c0-1.5-.5-3-2-4" />
+                            <path d="M12 2v20" />
+                            <path d="M9 8h6" />
+                          </svg>
+                        );
+                      } else if (family === 'Madeiras') {
+                        subtitle = 'Saxofone, Flauta, Oboé, Fagote';
+                        svgIcon = (
+                          <svg className="w-9 h-9 text-[#6482A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M14 2l-1 5-2 12-2 3h6l2-3-1-12-2-5z" />
+                            <path d="M13 7l2 1" />
+                            <path d="M12 11l2 1" />
+                            <path d="M11 15l2 1" />
+                          </svg>
+                        );
+                      } else if (family === 'Metais') {
+                        subtitle = 'Trompete, Trombone, Tuba';
+                        svgIcon = (
+                          <svg className="w-9 h-9 text-[#6482A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M10 10v8" />
+                            <path d="M14 10v8" />
+                            <path d="M18 10v8" />
+                            <path d="M22 6c-1 0-2 2-2 4v4c0 2 1 4 2 4v-12z" />
+                            <path d="M4 11v6c0 1 1 2 2 2h8c1 0 2-1 2-2v-6" />
+                            <path d="M10 12c-2 0-4-1-6-1v4c2 0 4-1 6-1" />
+                          </svg>
+                        );
+                      }
 
-                  <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                    <div 
-                      onClick={() => setExpandedFamily(prev => prev === 'Cargo' ? null : 'Cargo')}
-                      className="bg-slate-50 px-6 py-4 border-b border-slate-200 cursor-pointer flex justify-between items-center hover:bg-slate-100 transition-colors"
-                    >
-                      <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                        Cargo
-                        {['Enc. Regional', 'Enc. Local', 'Instrutor'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0) > 0 && <span className="bg-indigo-100 text-indigo-700 text-xs py-1 px-2 rounded-full">{['Enc. Regional', 'Enc. Local', 'Instrutor'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0)}</span>}
-                      </h3>
-                      <svg className={`w-6 h-6 text-slate-400 transition-transform ${expandedFamily === 'Cargo' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                    </div>
-                    {expandedFamily === 'Cargo' && (
-                      <div className="divide-y divide-slate-100 animate-in slide-in-from-top-2 duration-200">
-                        {['Enc. Regional', 'Enc. Local', 'Instrutor'].map(cargo => (
-                          <div key={cargo} className="flex justify-between items-center p-4 px-6 hover:bg-slate-50/50 transition-colors">
-                            <span className="font-bold text-slate-700 text-lg">{cargo}</span>
-                            <div className="flex items-center gap-4 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
-                              <button type="button" onClick={() => updateCount(cargo, -1)} className="w-10 h-10 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-xl flex items-center justify-center">-</button>
-                              <span className="w-8 text-center text-xl font-black text-slate-800">{instrumentCounts[cargo] || 0}</span>
-                              <button type="button" onClick={() => updateCount(cargo, 1)} className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 font-black text-xl flex items-center justify-center">+</button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                      return (
+                      <div key={family} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm transition-all duration-300">
+                        <div 
+                          onClick={() => setExpandedFamily(prev => prev === family ? null : family)}
+                          className={`relative flex flex-col items-center justify-center p-4.5 cursor-pointer transition-colors duration-300 ${isExpanded ? 'bg-[#F4F7F9]/80 border-b border-slate-100' : 'bg-[#F4F7F9] hover:bg-[#EAF0F4]'}`}
+                        >
+                          <span className="absolute top-3.5 left-4.5 text-[#8BA4C0] font-black text-base">{num}</span>
+                          {familyCount > 0 && (
+                            <span className="absolute top-3.5 right-4.5 bg-[#6482A0] text-white font-bold text-[10px] py-1 px-2.5 rounded-full shadow-sm">{familyCount} selecionado{familyCount > 1 ? 's' : ''}</span>
+                          )}
 
-                  {Object.entries(INSTRUMENT_GROUPS).map(([family, instruments]) => {
-                const familyCount = instruments.reduce((sum, inst) => sum + (instrumentCounts[inst] || 0), 0);
-                return (
-                <div key={family} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                  <div 
-                    onClick={() => setExpandedFamily(prev => prev === family ? null : family)}
-                    className="bg-slate-50 px-6 py-4 border-b border-slate-200 cursor-pointer flex justify-between items-center hover:bg-slate-100 transition-colors"
-                  >
-                    <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                      {family}
-                      {familyCount > 0 && <span className="bg-indigo-100 text-indigo-700 text-xs py-1 px-2 rounded-full">{familyCount}</span>}
-                    </h3>
-                    <svg className={`w-6 h-6 text-slate-400 transition-transform ${expandedFamily === family ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                  </div>
-                  {expandedFamily === family && (
-                    <div className="divide-y divide-slate-100 animate-in slide-in-from-top-2 duration-200">
-                      {instruments.map(inst => (
-                        <div key={inst} className="flex justify-between items-center p-4 px-6 hover:bg-slate-50/50 transition-colors">
-                          <span className="font-bold text-slate-700 text-lg">{inst}</span>
-                          <div className="flex items-center gap-4 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
-                            <button type="button" onClick={() => updateCount(inst, -1)} className="w-10 h-10 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-xl flex items-center justify-center">-</button>
-                            <span className="w-8 text-center text-xl font-black text-slate-800">{instrumentCounts[inst] || 0}</span>
-                            <button type="button" onClick={() => updateCount(inst, 1)} className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 font-black text-xl flex items-center justify-center">+</button>
+                          <div className="w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-2 shadow-sm border border-white/50 backdrop-blur-sm">
+                            {svgIcon}
                           </div>
+
+                          <div className="w-8 h-0.5 bg-[#D2DEE8] mb-3 rounded-full"></div>
+
+                          <h3 className="text-base font-extrabold text-[#6482A0] uppercase tracking-widest mb-0.5">{family}</h3>
+                          <p className="text-[10.5px] font-medium text-[#8BA4C0] text-center max-w-[170px] leading-relaxed">{subtitle}</p>
                         </div>
-                      ))}
+                        {isExpanded && (
+                          <div className="divide-y divide-slate-50 animate-in slide-in-from-top-2 duration-300">
+                            {instruments.map(inst => (
+                              <div key={inst} className="flex justify-between items-center p-2.5 px-4 hover:bg-slate-50/50 transition-colors">
+                                <span className="font-bold text-slate-700 text-base">{inst}</span>
+                                <div className="flex items-center gap-2 bg-white p-0.5 rounded-lg shadow-sm border border-slate-200">
+                                  <button type="button" onClick={() => updateCount(inst, -1)} className="w-8 h-8 rounded-md bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-lg flex items-center justify-center">-</button>
+                                  <span className="w-6 text-center text-base font-black text-slate-800">{instrumentCounts[inst] || 0}</span>
+                                  <button type="button" onClick={() => updateCount(inst, 1)} className="w-8 h-8 rounded-md bg-[#6482A0]/10 text-[#6482A0] hover:bg-[#6482A0]/20 font-black text-lg flex items-center justify-center">+</button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )})}
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="text-base font-extrabold text-[#8BA4C0] uppercase tracking-wider mb-2.5 px-1">Ministério e Cargo</h3>
+                    <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm transition-all duration-300">
+                      <div 
+                        onClick={() => setExpandedFamily(prev => prev === 'Ministério' ? null : 'Ministério')}
+                        className={`relative flex flex-col items-center justify-center p-4.5 cursor-pointer transition-colors duration-300 ${expandedFamily === 'Ministério' ? 'bg-[#F4F7F9]/80 border-b border-slate-100' : 'bg-[#F4F7F9] hover:bg-[#EAF0F4]'}`}
+                      >
+                        <span className="absolute top-3.5 left-4.5 text-[#8BA4C0] font-black text-base">04</span>
+                        {['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0) > 0 && (
+                          <span className="absolute top-3.5 right-4.5 bg-[#6482A0] text-white font-bold text-[10px] py-1 px-2.5 rounded-full shadow-sm">{['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0)} selecionado(s)</span>
+                        )}
+
+                        <div className="w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-2 shadow-sm border border-white/50 backdrop-blur-sm">
+                          <svg className="w-9 h-9 text-[#6482A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+
+                        <div className="w-8 h-0.5 bg-[#D2DEE8] mb-3 rounded-full"></div>
+
+                        <h3 className="text-base font-extrabold text-[#6482A0] uppercase tracking-widest mb-0.5">Ministério</h3>
+                        <p className="text-[10.5px] font-medium text-[#8BA4C0] text-center max-w-[170px] leading-relaxed">Ancião, Diácono, Cooperador</p>
+                      </div>
+                      {expandedFamily === 'Ministério' && (
+                        <div className="divide-y divide-slate-50 animate-in slide-in-from-top-2 duration-300">
+                          {['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].map(min => (
+                            <div key={min} className="flex justify-between items-center p-2.5 px-4 hover:bg-slate-50/50 transition-colors">
+                              <span className="font-bold text-slate-700 text-base">{min}</span>
+                              <div className="flex items-center gap-2 bg-white p-0.5 rounded-lg shadow-sm border border-slate-200">
+                                <button type="button" onClick={() => updateCount(min, -1)} className="w-8 h-8 rounded-md bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-lg flex items-center justify-center">-</button>
+                                <span className="w-6 text-center text-base font-black text-slate-800">{instrumentCounts[min] || 0}</span>
+                                <button type="button" onClick={() => updateCount(min, 1)} className="w-8 h-8 rounded-md bg-[#6482A0]/10 text-[#6482A0] hover:bg-[#6482A0]/20 font-black text-lg flex items-center justify-center">+</button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  )}
+
+                    <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm transition-all duration-300">
+                      <div 
+                        onClick={() => setExpandedFamily(prev => prev === 'Cargo' ? null : 'Cargo')}
+                        className={`relative flex flex-col items-center justify-center p-4.5 cursor-pointer transition-colors duration-300 ${expandedFamily === 'Cargo' ? 'bg-[#F4F7F9]/80 border-b border-slate-100' : 'bg-[#F4F7F9] hover:bg-[#EAF0F4]'}`}
+                      >
+                        <span className="absolute top-3.5 left-4.5 text-[#8BA4C0] font-black text-base">05</span>
+                        {['Enc. Regional', 'Enc. Local', 'Instrutor'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0) > 0 && (
+                          <span className="absolute top-3.5 right-4.5 bg-[#6482A0] text-white font-bold text-[10px] py-1 px-2.5 rounded-full shadow-sm">{['Enc. Regional', 'Enc. Local', 'Instrutor'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0)} selecionado(s)</span>
+                        )}
+
+                        <div className="w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-2 shadow-sm border border-white/50 backdrop-blur-sm">
+                          <svg className="w-9 h-9 text-[#6482A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                        </div>
+
+                        <div className="w-8 h-0.5 bg-[#D2DEE8] mb-3 rounded-full"></div>
+
+                        <h3 className="text-base font-extrabold text-[#6482A0] uppercase tracking-widest mb-0.5">Cargo</h3>
+                        <p className="text-[10.5px] font-medium text-[#8BA4C0] text-center max-w-[170px] leading-relaxed">Encarregado, Instrutor</p>
+                      </div>
+                      {expandedFamily === 'Cargo' && (
+                        <div className="divide-y divide-slate-50 animate-in slide-in-from-top-2 duration-300">
+                          {['Enc. Regional', 'Enc. Local', 'Instrutor'].map(cargo => (
+                            <div key={cargo} className="flex justify-between items-center p-2.5 px-4 hover:bg-slate-50/50 transition-colors">
+                              <span className="font-bold text-slate-700 text-base">{cargo}</span>
+                              <div className="flex items-center gap-2 bg-white p-0.5 rounded-lg shadow-sm border border-slate-200">
+                                <button type="button" onClick={() => updateCount(cargo, -1)} className="w-8 h-8 rounded-md bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-black text-lg flex items-center justify-center">-</button>
+                                <span className="w-6 text-center text-base font-black text-slate-800">{instrumentCounts[cargo] || 0}</span>
+                                <button type="button" onClick={() => updateCount(cargo, 1)} className="w-8 h-8 rounded-md bg-[#6482A0]/10 text-[#6482A0] hover:bg-[#6482A0]/20 font-black text-lg flex items-center justify-center">+</button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              )})}
-                </>
               )}
 
-              <div className="pt-4 sticky bottom-4 z-10">
+              <div className="pt-2 sticky bottom-3 z-10">
                 <Button 
                   type="submit" 
                   disabled={isSubmitting || Object.values(instrumentCounts).reduce((a,b)=>a+b,0) === 0} 
-                  className="w-full py-5 text-xl font-black rounded-2xl shadow-xl hover:shadow-2xl transition-all" 
+                  className="w-full py-3.5 text-base font-extrabold rounded-xl shadow-xl hover:shadow-2xl transition-all" 
                   variant={selectedRole === Role.MUSICIAN ? 'primary' : 'secondary'}
                 >
                   {isSubmitting ? 'SALVANDO...' : `SALVAR CONTAGEM (${Object.values(instrumentCounts).reduce((a,b)=>a+b,0)})`}
