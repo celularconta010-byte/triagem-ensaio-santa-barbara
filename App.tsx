@@ -358,7 +358,6 @@ const App: React.FC = () => {
 
         setTimeout(() => {
           setShowSuccess(false);
-          navigateTo('landing');
         }, 1500);
       } else {
         alert('Erro ao salvar participante(s). Tente novamente.');
@@ -378,6 +377,12 @@ const App: React.FC = () => {
 
   const handleDeleteEvent = async () => {
     if (!activeEventId) return;
+    const pass = prompt('Por segurança, digite a senha de Administrador para excluir o evento:');
+    if (pass !== 'senha') {
+      alert('Senha incorreta. Ação cancelada.');
+      return;
+    }
+
     if (confirm('PERIGO: Você está prestes a excluir o EVENTO INTEIRO e todas as suas listas de presença. Esta ação não pode ser desfeita. Tem certeza?')) {
       const success = await deleteEvent(activeEventId);
       if (success) {
@@ -397,7 +402,7 @@ const App: React.FC = () => {
 
   const handleAdminDeleteEvent = async (id: string, title: string) => {
     const pass = prompt('Por segurança, digite a senha de Administrador para excluir o evento:');
-    if (pass !== 'ensaiosccbst1') {
+    if (pass !== 'senha') {
       alert('Senha incorreta. Ação cancelada.');
       return;
     }
