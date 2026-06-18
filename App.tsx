@@ -835,13 +835,15 @@ const App: React.FC = () => {
                           onClick={() => setExpandedFamily(prev => prev === family ? null : family)}
                           className={`relative flex flex-col items-center justify-center p-4.5 cursor-pointer transition-colors duration-300 ${isExpanded ? 'bg-[#F4F7F9]/80 border-b border-slate-100' : 'bg-[#F4F7F9] hover:bg-[#EAF0F4]'}`}
                         >
-                          <span className="absolute top-3.5 left-4.5 text-[#8BA4C0] font-black text-base">{num}</span>
-                          {familyCount > 0 && (
-                            <span className="absolute top-3.5 right-4.5 bg-[#6482A0] text-white font-bold text-[10px] py-1 px-2.5 rounded-full shadow-sm">{familyCount} selecionado{familyCount > 1 ? 's' : ''}</span>
-                          )}
+                          <span className="absolute top-6 left-6 text-[#8BA4C0] font-black text-xl">{num}</span>
 
-                          <div className="w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-2 shadow-sm border border-white/50 backdrop-blur-sm">
+                          <div className="relative w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-2 shadow-sm border border-white/50 backdrop-blur-sm">
                             {svgIcon}
+                            {familyCount > 0 && (
+                              <span className="absolute top-0 right-0 bg-[#6482A0] text-white font-black text-[12px] w-6 h-6 rounded-full flex items-center justify-center border-2 border-white shadow-md">
+                                {familyCount}
+                              </span>
+                            )}
                           </div>
 
                           <div className="w-8 h-0.5 bg-[#D2DEE8] mb-3 rounded-full"></div>
@@ -874,14 +876,21 @@ const App: React.FC = () => {
                         onClick={() => setExpandedFamily(prev => prev === 'Ministério' ? null : 'Ministério')}
                         className={`relative flex flex-col items-center justify-center p-4.5 cursor-pointer transition-colors duration-300 ${expandedFamily === 'Ministério' ? 'bg-[#F4F7F9]/80 border-b border-slate-100' : 'bg-[#F4F7F9] hover:bg-[#EAF0F4]'}`}
                       >
-                        <span className="absolute top-3.5 left-4.5 text-[#8BA4C0] font-black text-base">04</span>
-                        {['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0) > 0 && (
-                          <span className="absolute top-3.5 right-4.5 bg-[#6482A0] text-white font-bold text-[10px] py-1 px-2.5 rounded-full shadow-sm">{['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0)} selecionado(s)</span>
-                        )}
+                        <span className="absolute top-6 left-6 text-[#8BA4C0] font-black text-xl">04</span>
 
-                        <div className="w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-2 shadow-sm border border-white/50 backdrop-blur-sm">
-                          <svg className="w-9 h-9 text-[#6482A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        </div>
+                        {(() => {
+                          const count = ['Ancião', 'Diácono', 'Coop. Ofício', 'Coop. Jovens'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0);
+                          return (
+                            <div className="relative w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-2 shadow-sm border border-white/50 backdrop-blur-sm">
+                              <svg className="w-9 h-9 text-[#6482A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                              {count > 0 && (
+                                <span className="absolute top-0 right-0 bg-[#6482A0] text-white font-black text-[12px] w-6 h-6 rounded-full flex items-center justify-center border-2 border-white shadow-md">
+                                  {count}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()}
 
                         <div className="w-8 h-0.5 bg-[#D2DEE8] mb-3 rounded-full"></div>
 
@@ -909,14 +918,21 @@ const App: React.FC = () => {
                         onClick={() => setExpandedFamily(prev => prev === 'Cargo' ? null : 'Cargo')}
                         className={`relative flex flex-col items-center justify-center p-4.5 cursor-pointer transition-colors duration-300 ${expandedFamily === 'Cargo' ? 'bg-[#F4F7F9]/80 border-b border-slate-100' : 'bg-[#F4F7F9] hover:bg-[#EAF0F4]'}`}
                       >
-                        <span className="absolute top-3.5 left-4.5 text-[#8BA4C0] font-black text-base">05</span>
-                        {['Enc. Regional', 'Enc. Local', 'Instrutor'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0) > 0 && (
-                          <span className="absolute top-3.5 right-4.5 bg-[#6482A0] text-white font-bold text-[10px] py-1 px-2.5 rounded-full shadow-sm">{['Enc. Regional', 'Enc. Local', 'Instrutor'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0)} selecionado(s)</span>
-                        )}
+                        <span className="absolute top-6 left-6 text-[#8BA4C0] font-black text-xl">05</span>
 
-                        <div className="w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-2 shadow-sm border border-white/50 backdrop-blur-sm">
-                          <svg className="w-9 h-9 text-[#6482A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                        </div>
+                        {(() => {
+                          const count = ['Enc. Regional', 'Enc. Local', 'Instrutor'].reduce((sum, item) => sum + (instrumentCounts[item] || 0), 0);
+                          return (
+                            <div className="relative w-16 h-16 bg-white/40 rounded-full flex items-center justify-center mb-2 shadow-sm border border-white/50 backdrop-blur-sm">
+                              <svg className="w-9 h-9 text-[#6482A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                              {count > 0 && (
+                                <span className="absolute -top-1.5 -right-1.5 bg-[#6482A0] text-white font-extrabold text-[10px] w-5 h-5 rounded-full flex items-center justify-center border border-white shadow-sm">
+                                  {count}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()}
 
                         <div className="w-8 h-0.5 bg-[#D2DEE8] mb-3 rounded-full"></div>
 
