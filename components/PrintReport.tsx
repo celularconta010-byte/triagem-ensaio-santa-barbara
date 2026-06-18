@@ -99,8 +99,7 @@ export const PrintReport: React.FC<PrintReportProps> = ({ attendees, eventMeta, 
 
                         <div className="text-center pb-8 mt-auto">
                             <div className="inline-block bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 shadow-md">
-                                <div className="text-xl font-bold text-indigo-950">{eventMeta.local || 'Local não informado'}</div>
-                                <div className="text-md font-medium text-indigo-900 mt-1">{eventMeta.date || ''}</div>
+                                <div className="text-md font-medium text-indigo-900">{eventMeta.date || ''}</div>
                             </div>
                         </div>
                     </div>
@@ -170,14 +169,10 @@ export const PrintReport: React.FC<PrintReportProps> = ({ attendees, eventMeta, 
                             </tbody>
                         </table>
 
-                        <div className="grid grid-cols-2 gap-2 mt-4">
-                            <table className="mb-0">
-                                <thead><tr><th>Cidades</th><th className="qty-cell">Qtd.</th></tr></thead>
-                                <tbody><tr><td>Localidades</td><td className="qty-cell">{uniqueCitiesCount}</td></tr></tbody>
-                            </table>
-                            <table className="mb-0">
+                        <div className="mt-4">
+                            <table className="mb-0 w-full">
                                 <thead><tr><th>Hinos</th><th className="qty-cell">Tot.</th></tr></thead>
-                                <tbody><tr><td className="text-[6pt] truncate max-w-[80px]">{eventMeta.hinos || '-'}</td><td className="qty-cell">{eventMeta.hinos ? eventMeta.hinos.split(/[,;| ]+/).filter(h => h.trim() !== '').length : 0}</td></tr></tbody>
+                                <tbody><tr><td className="text-[6pt] truncate max-w-[200px]">{eventMeta.hinos || '-'}</td><td className="qty-cell">{eventMeta.hinos ? eventMeta.hinos.split(/[,;| ]+/).filter(h => h.trim() !== '').length : 0}</td></tr></tbody>
                             </table>
                         </div>
 
